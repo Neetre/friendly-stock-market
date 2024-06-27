@@ -1,10 +1,18 @@
-from datetime import datetime
-from concurrent import futures
+'''
+This script downloads the stock data from Yahoo Finance for the S&P 500 companies
+
+Neetre 2024
+'''
 
 import os
 
+from datetime import datetime
+from concurrent import futures
+
 import yfinance as yf
 import time
+
+import pandas as pd
 
 
 bad_names =[] #to keep track of failed queries
@@ -30,6 +38,14 @@ def download_stock(stock):
     except Exception as e:
         bad_names.append(stock)
         print(f"Error downloading {stock}: {str(e)}")
+
+
+def get_s_and_p500():
+    '''This function downloads the S&P 500 companies from Wikipedia'''
+    url = 'https://en.wikipedia.org/wiki/List_of_S%26P_500_companies'
+    html = pd.read_html(url, header = 0)
+    df = html[0]
+    return df
 
 
 def get_data():
