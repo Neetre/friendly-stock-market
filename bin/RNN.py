@@ -49,6 +49,7 @@ def create_sequences(data, seq_length):
         y = data[i + seq_length]  # get the target
         xs.append(x)
         ys.append(y)
+    return np.array(xs), np.array(ys)
 
 
 def train(model, train_loader, optimizer, loss_f):
@@ -89,8 +90,32 @@ def main():
     X_train, X_test = X[:train_size], X[train_size:]
     y_train, y_test = y[:train_size], y[train_size:]
     
+    X_train = torch.FloatTensor(X_train)
+    X_test = torch.FloatTensor(X_test)
+    y_train = torch.FloatTensor(y_train)
+    y_test = torch.FloatTensor(y_test)
     
+    train_data = TensorDataset(X_train, y_train)
+    test_data = TensorDataset(X_test, y_test)
+    train_loader = DataLoader(train_data, batch_size=64, shuffle=True)
+    test_loader = DataLoader(test_data, batch_size=64, shuffle=False)
+    
+    # Hyperparam
+    input_size = 5
+    hiddend_size = 64
+    num_layers = 2
+    output_size = 5
+    model = StockRNN(input_size, hiddend_size, num_layers, output_size).to(device)
+    loss_f = nn.MSELoss()
+    optimizer = optim.AdamW(model.parameters(), device=device)
+    
+    num_epochs = 50
+    for epoch in range(num_epochs):
+        print(f"Epoch {epoch + 1}/{num_epochs}")
+        train(model, train_loader, optimizer, loss_f)
+        test(model, test_loader, loss_f)
 
+    
 
 if __name__ == '__main__':
     main()
