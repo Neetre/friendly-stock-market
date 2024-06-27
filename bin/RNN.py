@@ -18,9 +18,9 @@ elif torch.backends.mps.is_available():
     device = "mps"
 
 
-class Net(nn.Module):
+class StockRNN(nn.Module):
     def __init__(self):
-        super(Net, self).__init__()
+        super(StockRNN, self).__init__()
         self.rnn = nn.LSTM(28, 64, batch_first=True)
         self.batchnorm = nn.BatchNorm1d(64)
         self.dropout1 = nn.Dropout2d(0.25)
@@ -99,7 +99,7 @@ def main():
     test_data = (torch.tensor(x.values), torch.tensor(y.values))
 
     # Create the model
-    model = Net().to(device)
+    model = StockRNN().to(device)
     optimizer = optim.AdamW(model.parameters(), lr=0.01)
     scheduler = StepLR(optimizer, step_size=1, gamma=0.7)
 
