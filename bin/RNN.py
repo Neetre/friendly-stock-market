@@ -10,6 +10,7 @@ import torch.optim as optim
 from torch.utils.data import DataLoader, TensorDataset
 import pandas as pd
 import numpy as np
+from sklearn.preprocessing import MinMaxScaler
 
 device = "cpu"
 if torch.cuda.is_available():
@@ -27,10 +28,10 @@ class StockRNN(nn.Module):
         self.fc = nn.Linear(hidden_size, output_size)
 
     def forward(self, x):
-        h0 = torch.zeros(self.num_layers, x.size(0), self.hidden_size).to(device)
-        c0 = torch.zeros(self.num_layers, x.size(0), self.hidden_size).to(device)
-        out, _ = self.lstm(x, (h0, c0))
-        out = self.fc(out[:, -1, :])
+        h0 = torch.zeros(self.num_layers, x.size(0), self.hidden_size).to(device)  # Initial hidden state of the LSTM
+        c0 = torch.zeros(self.num_layers, x.size(0), self.hidden_size).to(device)  # Initial cell state of the LSTM
+        out, _ = self.lstm(x, (h0, c0))  # Forward pass through the LSTM layer
+        out = self.fc(out[:, -1, :])  # Forward pass through the fully connected layer
         return out
 
 
@@ -40,63 +41,55 @@ def load_data():
     return df
 
 
-def train(model, device, train_loader, optimizer, epoch):
+def create_sequences(data, seq_length):
+    xs = []
+    ys = []
+    for i in range(len(data) - seq_length):
+        x = data[i:(i + seq_length)]  # get the input sequence
+        y = data[i + seq_length]  # get the target
+        xs.append(x)
+        ys.append(y)
+
+
+def train(model, train_loader, optimizer, loss_f):
     model.train()
-    for data, target in enumerate(train_loader):
+    for batch_idx, (data, target) in enumerate(train_loader):
         data, target = data.to(device), target.to(device)
         optimizer.zero_grad()
         output = model(data)
-        loss = F.nll_loss(output, target)
+        loss = loss_f(output, target)
         loss.backward()
         optimizer.step()
-        if batch_idx % 10 == 0:
-            print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
-                epoch, batch_idx * len(data), len(train_loader.dataset),
-                100. * batch_idx / len(train_loader), loss.item()))
+        if batch_idx % 100 == 0:
+            print(f'Train Batch: {batch_idx}/{len(train_loader)} Loss: {loss.item():.6f}')
 
 
-def test(model, device, test_loader):
+def test(model, test_loader, loss_f):
     model.eval()
     test_loss = 0
-    correct = 0
     with torch.no_grad():
         for data, target in test_loader:
             data, target = data.to(device), target.to(device)
             output = model(data)
-            test_loss += F.nll_loss(output, target, reduction='sum').item()
-            pred = output.argmax(dim=1, keepdim=True)
-            correct += pred.eq(target.view_as(pred)).sum().item()
-
-    test_loss /= len(test_loader.dataset)
-
-    print('\nTest set: Average loss: {:.4f}, Accuracy: {}/{} ({:.0f}%)\n'.format(
-        test_loss, correct, len(test_loader.dataset),
-        100. * correct / len(test_loader.dataset)))
+            test_loss += loss_f(output, target).item()
+    test_loss /= len(test_loader)
+    print(f"Test set: Average loss: {test_loss:.4f}")
 
 
 def main():
     df = load_data()
 
-    # Split the data into training and testing sets
-    train_data = df.iloc[:int(0.8*len(df))]
-    x = train_data.drop('Close', axis=1)
-    y = train_data['Close']
-    train_data = (torch.tensor(x.values), torch.tensor(y.values))
+    scaler = MinMaxScaler()  # 
+    data_normalized = scaler.fit_transform(df[['Open', 'High', 'Low', 'Close', 'Volume']].values)
+    
+    seq_length = 10
+    X, y = create_sequences(data_normalized, seq_length)
 
-    test_data = df.iloc[int(0.8*len(df)):]
-    x = test_data.drop('Close', axis=1)
-    y = test_data['Close']
-    test_data = (torch.tensor(x.values), torch.tensor(y.values))
-
-    # Create the model
-    model = StockRNN().to(device)
-    optimizer = optim.AdamW(model.parameters(), lr=0.01)
-    scheduler = StepLR(optimizer, step_size=1, gamma=0.7)
-
-    for epoch in range(1, 20):
-        train(model, device, train_data, optimizer, epoch)
-        test(model, device, test_data)
-        scheduler.step()
+    train_size = int(0.8 * len(X))
+    X_train, X_test = X[:train_size], X[train_size:]
+    y_train, y_test = y[:train_size], y[train_size:]
+    
+    
 
 
 if __name__ == '__main__':
