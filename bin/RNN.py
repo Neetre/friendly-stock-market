@@ -19,34 +19,24 @@ elif torch.backends.mps.is_available():
 
 
 class StockRNN(nn.Module):
-    def __init__(self):
+    def __init__(self, input_size, hidden_size, num_layers, output_size):
         super(StockRNN, self).__init__()
-        self.rnn = nn.LSTM(28, 64, batch_first=True)
-        self.batchnorm = nn.BatchNorm1d(64)
-        self.dropout1 = nn.Dropout2d(0.25)
-        self.dropout2 = nn.Dropout2d(0.5)
-        self.fc1 = nn.Linear(64, 32)
-        self.fc2 = nn.Linear(32, 10)
+        self.hidden_size = hidden_size
+        self.num_layers = num_layers
+        self.lstm = nn.LSTM(input_size, hidden_size, num_layers, batch_first=True)
+        self.fc = nn.Linear(hidden_size, output_size)
 
     def forward(self, x):
-        x = x.reshape(-1, 28, 28)
-        x, hidden =self.rnn(x)
+        h0 = torch.zeros(self.num_layers, x.size(0), self.hidden_size).to(device)
+        c0 = torch.zeros(self.num_layers, x.size(0), self.hidden_size).to(device)
+        out, _ = self.lstm(x, (h0, c0))
+        out = self.fc(out[:, -1, :])
+        return out
 
-        x = x[:, -1, :]
-        x = self.batchnorm(x)
-        x = self.dropout1(x)
-        x = self.fc1(x)
-        x = F.relu(x)
-        x = self.dropout2(x)
-        x = self.fc2(x)
-        x = F.log_softmax(x, dim=1)
-        return x
-    
 
 def load_data():
-    # Load the preprocessed data
     df = pd.read_csv('../data/csv_preprocessed/NVDA.csv')
-    df = df.apply(pd.to_numeric, errors='coerce').dropna(axis=1)    
+    df = df.sort_values('Date').reset_index(drop=True)
     return df
 
 
