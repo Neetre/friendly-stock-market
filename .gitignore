@@ -1,5 +1,5 @@
 .venv/
 
-data/
 csv/
-data/csv_processed/
+csv_processed/
+img_readme/
