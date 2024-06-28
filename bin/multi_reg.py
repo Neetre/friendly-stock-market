@@ -44,11 +44,11 @@ def analyze(key="", crypto=False):
     p_values = p_values.round(3)
     print("P-values: ", p_values)
 
-    # print(reg.predict([[124.09,126.41,122.92,434800000]]))  # 2024-06-27 00:00:00-04:00,124.09,126.41,122.92,,434800000
+    print(reg.predict([[124.09,126.41,122.92,434800000]]))  # 2024-06-27 00:00:00-04:00,124.09,126.41,122.92,,434800000
     return reg
 
 
-def predicts(key, reg, crypto=False):
+def predicts(key, reg):
     print(f"Predicting for {key}...")
     data = input("Enter the data in the format 'open_price,high,low,volume': ")
 
