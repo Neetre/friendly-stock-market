@@ -8,13 +8,13 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.linear_model import LinearRegression
+from sklearn.feature_selection import f_regression
 import seaborn as sns
 sns.set_theme()
 
 
-
-def load_data():
-    data = pd.read_csv('../data/csv_preprocessed/AMD.csv')
+def load_data(stock):
+    data = pd.read_csv(f'../data/csv_preprocessed/{stock}.csv')
     print(data.describe())
     # print(data["Date"])
     data = data.drop("Date", axis=1)
@@ -31,16 +31,20 @@ def adj_r2(reg, X, y):
     return adj_r2
 
 
-def main():
-    X, y = load_data()
+def analyze(stock=""):
+    X, y = load_data(stock)
     reg = LinearRegression()
     reg.fit(X, y)
     print("Regression coeff: ", reg.coef_)
     print("Regression r2 score: ", reg.score(X, y))
     print("Regression adjusted r2 score: ", adj_r2(reg, X, y))
 
-    # print(reg.predict([[124.00,126.41,122.92,434800000]]))  # 2024-06-27 00:00:00-04:00,124.09,126.41,122.92,,434800000
+    p_values = f_regression(X, y)[1]
+    p_values = p_values.round(3)
+    print("P-values: ", p_values)
+
+    # print(reg.predict([[124.09,126.41,122.92,434800000]]))  # 2024-06-27 00:00:00-04:00,124.09,126.41,122.92,,434800000
 
 
 if __name__ == "__main__":
-    main()
+    analyze("GOOGL")
