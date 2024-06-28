@@ -6,11 +6,9 @@ Neetre 2024
 
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
+
 from sklearn.linear_model import LinearRegression
 from sklearn.feature_selection import f_regression
-import seaborn as sns
-sns.set_theme()
 
 from web_scraping import webscarp
 
@@ -65,7 +63,7 @@ def predicts(key, reg, crypto=False):
     # data = input("Enter the data in the format 'open_price,high,low,volume': ")
     data = webscarp(key, crypto)
     prediction = reg.predict([[data['Prev_close'], data['High'], data['Low'], data['Volume']]])  # [float(i) for i in data.split(",")]
-    print(f"Closing price predicted for {key}: {prediction[0]}$")
+    print(f"Closing price predicted for {key}: {prediction[0]:.4f}$")
 
 
 if __name__ == "__main__":

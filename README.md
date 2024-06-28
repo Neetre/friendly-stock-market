@@ -13,11 +13,10 @@ python >= 3.8
 
 **Setting Up the Environment**
 
-* Windows: `./start_Windows.bat`
-* Linux/macOS: `./start_Linux.sh`
+* Windows: `./setup_Windows.bat`
+* Linux/macOS: `./setup_Linux.sh`
 
 These scripts will install required dependencies, and build a virtual environment for you if you don't have one.
-They will also start the app automatically.
 
 ## Running the Program (CLI or GUI)
 
@@ -29,7 +28,7 @@ They will also start the app automatically.
 
     The `--help` flag displays available command-line arguments.
 
-![Image](data/readme_img/cli.png)
+![Image](data/img_readme/cli.png)
 
 ## Author
 

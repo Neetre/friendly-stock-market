@@ -11,6 +11,8 @@ from multi_reg import analyze, predicts
 from preprocess_data import preprocess_data
 import argparse
 
+from icecream import ic
+
 
 def arg_parser():
     parser = argparse.ArgumentParser(description="Analyze stock data using multiple regression")
@@ -25,6 +27,11 @@ def arg_parser():
 def main():
     try:
         args = arg_parser()
+        
+        if args.verbose:
+            ic.enable()
+        else:
+            ic.disable()
 
         if args.crypto:
             if args.download:

@@ -29,6 +29,7 @@ def download_crypto(crypto):
         if crypto_df.empty:
             raise ValueError(f"No data for {crypto}")
         crypto_df['Name'] = crypto
+        os.mkdir(os.path.join('..', 'data', 'csv', 'crypto'), exist_ok=True)
         output_file = os.path.join('..', 'data', 'csv', 'crypto', f'{crypto}.csv')
         crypto_df.to_csv(output_file)
         time.sleep(1)
@@ -52,6 +53,7 @@ def download_stock(stock):
         if stock_df.empty:
             raise ValueError(f"No data for {stock}")
         stock_df['Name'] = stock
+        os.makedirs(os.path.join('..', 'data', 'csv', 'stock'), exist_ok=True)
         output_file = os.path.join('..', 'data', 'csv', 'stock', f'{stock}.csv')
         stock_df.to_csv(output_file)
         time.sleep(1)
