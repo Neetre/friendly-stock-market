@@ -35,8 +35,8 @@ class StockRNN(nn.Module):
         return out
 
 
-def load_data():
-    df = pd.read_csv('../data/csv_preprocessed/NVDA.csv')
+def load_data(key, crypto=False):
+    df = pd.read_csv('../data/csv_preprocessed/' + ('crypto' if crypto else 'stock') + f'/{key}.csv')
     df = df.sort_values('Date').reset_index(drop=True)
     return df
 
@@ -114,7 +114,6 @@ def main():
         print(f"Epoch {epoch + 1}/{num_epochs}")
         train(model, train_loader, optimizer, loss_f)
         test(model, test_loader, loss_f)
-
     
 
 if __name__ == '__main__':

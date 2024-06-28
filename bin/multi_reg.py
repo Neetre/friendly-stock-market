@@ -45,7 +45,6 @@ def analyze(key="", crypto=False):
     print("P-values: ", p_values)
 
     # print(reg.predict([[124.09,126.41,122.92,434800000]]))  # 2024-06-27 00:00:00-04:00,124.09,126.41,122.92,,434800000
-
     return reg
 
 
@@ -53,8 +52,8 @@ def predicts(key, reg, crypto=False):
     print(f"Predicting for {key}...")
     data = input("Enter the data in the format 'open_price,high,low,volume': ")
 
-    prediction = print(reg.predict([[float(i) for i in data.split(",")]], crypto))
+    prediction = print(reg.predict([[float(i) for i in data.split(",")]]))
     print(f"Closing price predicted for {key}: {prediction}")
 
 if __name__ == "__main__":
-    analyze("GOOGL")
+    analyze("BTC-USD", True)  # 2024-06-28 00:00:00+00:00,61612.8046875,62126.09765625,61190.26171875,61439.4375,22124865536

@@ -129,7 +129,8 @@ def get_data_crypto():
 
 def main():
     get_data_crypto()
-    # get_data_stock()
+    get_data_stock()
+
 
 if __name__ == '__main__':
     main()
