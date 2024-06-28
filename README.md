@@ -7,6 +7,10 @@
 
 ## Description
 
+This project is a stock market analysis tool that provides users with information about the stock market. It allows users to view stock prices, analyze stock trends, and make informed decisions about their investments.
+
+It also provides users with the ability to predict future stock prices using machine learning algorithms. Users can input historical stock data and the program will use this data to predict future stock prices.
+
 ## Requirements
 
 python >= 3.8
