@@ -29,7 +29,7 @@ def download_crypto(crypto):
         if crypto_df.empty:
             raise ValueError(f"No data for {crypto}")
         crypto_df['Name'] = crypto
-        os.mkdir(os.path.join('..', 'data', 'csv', 'crypto'), exist_ok=True)
+        os.makedirs(os.path.join('..', 'data', 'csv', 'crypto'), exist_ok=True)
         output_file = os.path.join('..', 'data', 'csv', 'crypto', f'{crypto}.csv')
         crypto_df.to_csv(output_file)
         time.sleep(1)
