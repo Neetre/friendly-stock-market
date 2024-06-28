@@ -70,13 +70,17 @@ def get_s_and_p500():
 
 
 def get_crypto_list():
-    exchange = ccxt.binance()
-    exchange.load_markets()
-    crypto_list = list(exchange.markets.keys())
-    crypto_list = [i for i in crypto_list if 'USD' == i.split("/")[1].split(":")[0]]
-    crypto_list = [i.replace('/', "-").split(":")[0] for i in crypto_list]
-    crypto_list = list(set(crypto_list))
-    crypto_list = sorted(crypto_list)
+    try:
+        exchange = ccxt.binance()
+        exchange.load_markets()
+        crypto_list = list(exchange.markets.keys())
+        crypto_list = [i for i in crypto_list if 'USD' == i.split("/")[1].split(":")[0]]
+        crypto_list = [i.replace('/', "-").split(":")[0] for i in crypto_list]
+        crypto_list = list(set(crypto_list))
+        crypto_list = sorted(crypto_list)
+    except Exception as e:
+        print(f"An error occurred while loading the crypto list: {e}")
+        crypto_list = []
     return crypto_list
 
 
@@ -112,8 +116,13 @@ def get_data_crypto():
     max_workers = 10
     crypto_list_sorted = sorted(crypto_list)
     workers = min(max_workers, len(crypto_list_sorted))
+    os.makedirs('../data/csv/stock/', exist_ok=True)
+    os.makedirs('../data/csv/crypto/', exist_ok=True)
     with futures.ThreadPoolExecutor(workers) as executor:
-        res = executor.map(download_crypto, crypto_list_sorted)
+        try:
+            res = executor.map(download_crypto, crypto_list_sorted)
+        except Exception as e:
+            print(f"An error occurred: {e}")
 
     if len(bad_names_crypto) > 0:
         with open('failed_queries_crypto.txt','w') as outfile:

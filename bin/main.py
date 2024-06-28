@@ -23,32 +23,51 @@ def arg_parser():
 
 
 def main():
-    args = arg_parser()
+    try:
+        args = arg_parser()
 
-    if args.crypto:
-        if args.download:
-            get_data_crypto()
-            preprocess_data(True)
+        if args.crypto:
+            if args.download:
+                get_data_crypto()  # Assuming this might raise an error
+                preprocess_data(True)  # Assuming this might raise an error
 
-        crypto = input("Enter the cryptocurrency you want to analyze: ")
+            crypto = input("Enter the cryptocurrency you want to analyze(BTC, ETH, ...): ") + "-USD"
 
-        reg = analyze(crypto, True)
+            try:
+                reg = analyze(crypto, True)  # Assuming this might raise an error
+            except Exception as e:
+                print(f"Error analyzing {crypto}: {e}")
+                return
 
-        if args.predict:
-            predicts(crypto, reg, True)
+            if args.predict:
+                try:
+                    predicts(crypto, reg, True)  # Assuming this might raise an error
+                except Exception as e:
+                    print(f"Error predicting {crypto}: {e}")
+                    return
 
+        else:
+            if args.download:
+                get_data_stock()  # Assuming this might raise an error
+                preprocess_data(False)  # Assuming this might raise an error
 
-    else:
-        if args.download:
-            get_data_stock()
-            preprocess_data(False)
+            stock = input("Enter the stock you want to analyze(acronym): ")
 
-        stock = input("Enter the stock you want to analyze(acronym): ")
+            try:
+                reg = analyze(stock, False)  # Assuming this might raise an error
+            except Exception as e:
+                print(f"Error analyzing {stock}: {e}")
+                return
 
-        reg = analyze(stock, False)
+            if args.predict:
+                try:
+                    predicts(stock, reg, False)  # Assuming this might raise an error
+                except Exception as e:
+                    print(f"Error predicting {stock}: {e}")
+                    return
 
-        if args.predict:
-            predicts(stock, reg, False)
+    except Exception as e:
+        print(f"An unexpected error occurred: {e}")
 
 
 if __name__ == "__main__":
