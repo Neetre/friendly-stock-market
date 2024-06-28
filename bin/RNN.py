@@ -97,19 +97,19 @@ def main():
     
     train_data = TensorDataset(X_train, y_train)
     test_data = TensorDataset(X_test, y_test)
-    train_loader = DataLoader(train_data, batch_size=64, shuffle=True)
-    test_loader = DataLoader(test_data, batch_size=64, shuffle=False)
-    
+    train_loader = DataLoader(train_data, shuffle=True)
+    test_loader = DataLoader(test_data, shuffle=False)
+
     # Hyperparam
     input_size = 5
     hiddend_size = 64
-    num_layers = 2
+    num_layers = 4
     output_size = 5
     model = StockRNN(input_size, hiddend_size, num_layers, output_size).to(device)
     loss_f = nn.MSELoss()
-    optimizer = optim.AdamW(model.parameters(), device=device)
+    optimizer = optim.AdamW(model.parameters())
     
-    num_epochs = 50
+    num_epochs = 3
     for epoch in range(num_epochs):
         print(f"Epoch {epoch + 1}/{num_epochs}")
         train(model, train_loader, optimizer, loss_f)
