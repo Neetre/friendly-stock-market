@@ -13,8 +13,8 @@ import seaborn as sns
 sns.set_theme()
 
 
-def load_data(stock):
-    data = pd.read_csv(f'../data/csv_preprocessed/{stock}.csv')
+def load_data(key, crypto):
+    data = pd.read_csv(f'../data/csv_preprocessed/' + ('crypto' if crypto else 'stock') + f'/{key}.csv')
     print(data.describe())
     # print(data["Date"])
     data = data.drop("Date", axis=1)
@@ -31,8 +31,9 @@ def adj_r2(reg, X, y):
     return adj_r2
 
 
-def analyze(stock=""):
-    X, y = load_data(stock)
+def analyze(key="", crypto=False):
+    print(f"Analyzing {key}")
+    X, y = load_data(key, crypto)
     reg = LinearRegression()
     reg.fit(X, y)
     print("Regression coeff: ", reg.coef_)
@@ -45,6 +46,15 @@ def analyze(stock=""):
 
     # print(reg.predict([[124.09,126.41,122.92,434800000]]))  # 2024-06-27 00:00:00-04:00,124.09,126.41,122.92,,434800000
 
+    return reg
+
+
+def predicts(key, reg, crypto=False):
+    print(f"Predicting for {key}...")
+    data = input("Enter the data in the format 'open_price,high,low,volume': ")
+
+    prediction = print(reg.predict([[float(i) for i in data.split(",")]], crypto))
+    print(f"Closing price predicted for {key}: {prediction}")
 
 if __name__ == "__main__":
     analyze("GOOGL")

@@ -8,17 +8,18 @@ import os
 import pandas as pd
 import numpy as np
 
-def preprocess_data():
+
+def preprocess_data(crypto=False):
     '''
     Structure of csv files: Date,Open,High,Low,Close,Volume,Dividends,Stock Splits,Name
     We want Date,Open,High,Low,Close,Volume
     '''
 
     # Get the list of csv files
-    csv_files = os.listdir(os.path.join('..', 'data', 'csv'))
+    csv_files = os.path.join('..', 'data', 'csv', 'crypto' if crypto else 'stock')
 
     # Create a new directory to store the preprocessed data
-    preprocessed_data_dir = os.path.join('..', 'data', 'csv_preprocessed')
+    preprocessed_data_dir = os.path.join('..', 'data', 'csv_preprocessed', 'crypto' if crypto else 'stock')
     os.makedirs(preprocessed_data_dir, exist_ok=True)
 
     for csv_file in csv_files:
