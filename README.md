@@ -32,7 +32,7 @@ These scripts will install required dependencies, and build a virtual environmen
 
     The `--help` flag displays available command-line arguments.
 
-![Image](data/img_readme/cli.png)
+![Image](./data/img_readme/cli.png)
 
 ## Author
 
