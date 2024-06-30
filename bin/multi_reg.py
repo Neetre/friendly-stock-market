@@ -58,11 +58,16 @@ def analyze(key="", crypto=False):
         print(f"An unexpected error occurred during analysis of {key}: {e}")
 
 
-def predicts(key, reg, crypto=False):
+def predicts(key, reg, crypto=False, auto=False):
     print(f"Predicting for {key}...")
-    # data = input("Enter the data in the format 'open_price,high,low,volume': ")
-    data = webscarp(key, crypto)
-    prediction = reg.predict([[data['Prev_close'], data['High'], data['Low'], data['Volume']]])  # [float(i) for i in data.split(",")]
+    if auto:
+        data = webscarp(key, crypto)
+    
+        prediction = reg.predict([[data['Prev_close'], data['High'], data['Low'], data['Volume']]])  # [float(i) for i in data.split(",")]
+    else:
+        data = input("Enter the data in the format 'open_price,high,low,volume': ")
+        prediction = reg.predict([[float(i) for i in data.split(",")]])
+        
     print(f"Closing price predicted for {key}: {prediction[0]:.4f}$")
 
 
