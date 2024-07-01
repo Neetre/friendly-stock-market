@@ -10,7 +10,7 @@ import pandas as pd
 from sklearn.linear_model import LinearRegression
 from sklearn.feature_selection import f_regression
 
-from web_scraping import webscarp
+from web_scraping import webscarp, convert_to_float
 
 
 def load_data(key, crypto):
@@ -66,7 +66,7 @@ def predicts(key, reg, crypto=False, auto=False):
         prediction = reg.predict([[data['Prev_close'], data['High'], data['Low'], data['Volume']]])  # [float(i) for i in data.split(",")]
     else:
         data = input("Enter the data in the format 'open_price,high,low,volume': ")
-        prediction = reg.predict([[float(i) for i in data.split(",")]])
+        prediction = reg.predict([[float(i) if 'M' not in i else convert_to_float(i) for i in data.split(",")]])
         
     print(f"Closing price predicted for {key}: {prediction[0]:.4f}$")
 
