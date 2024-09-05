@@ -8,7 +8,6 @@ def preprocess_data(crypto):
     '''
 
     try:
-        # Get the list of csv files
         if crypto:
             csv_dir = os.path.join('..', 'data', 'csv', 'crypto')
         else:
@@ -21,7 +20,6 @@ def preprocess_data(crypto):
 
         csv_files = [f for f in os.listdir(csv_dir) if f.endswith('.csv')]
 
-        # Create a new directory to store the preprocessed data
         if crypto:
             preprocessed_data_dir = os.path.join('..', 'data', 'csv_preprocessed', 'crypto')
         else:

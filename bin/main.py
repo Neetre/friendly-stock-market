@@ -35,40 +35,40 @@ def main():
 
         if args.crypto:
             if args.download:
-                get_data_crypto()  # Assuming this might raise an error
-                preprocess_data(True)  # Assuming this might raise an error
+                get_data_crypto()
+                preprocess_data(True)
 
             crypto = input("Enter the cryptocurrency you want to analyze(BTC, ETH, ...): ") + "-USD"
 
             try:
-                reg = analyze(crypto, True)  # Assuming this might raise an error
+                reg = analyze(crypto, True)
             except Exception as e:
                 print(f"Error analyzing {crypto}: {e}")
                 return
 
             if args.predict:
                 try:
-                    predicts(crypto, reg, True)  # Assuming this might raise an error
+                    predicts(crypto, reg, True)
                 except Exception as e:
                     print(f"Error predicting {crypto}: {e}")
                     return
 
         else:
             if args.download:
-                get_data_stock()  # Assuming this might raise an error
-                preprocess_data(False)  # Assuming this might raise an error
+                get_data_stock()
+                preprocess_data(False)
 
             stock = input("Enter the stock you want to analyze(acronym): ")
 
             try:
-                reg = analyze(stock, False)  # Assuming this might raise an error
+                reg = analyze(stock, False)
             except Exception as e:
                 print(f"Error analyzing {stock}: {e}")
                 return
 
             if args.predict:
                 try:
-                    predicts(stock, reg, False)  # Assuming this might raise an error
+                    predicts(stock, reg, False)
                 except Exception as e:
                     print(f"Error predicting {stock}: {e}")
                     return

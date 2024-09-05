@@ -16,16 +16,15 @@ import time
 import pandas as pd
 
 
-bad_names =[] #to keep track of failed queries
-bad_names_crypto =[] #to keep track of failed queriess
+bad_names =[] # to keep track of failed queries
+bad_names_crypto =[] # to keep track of failed queriess for crypto
 
 
 def download_crypto(crypto):
     try:
-        # Fetch data for the cryptocurrency
-        data = yf.Ticker(crypto)
-        # Get historical market data
-        crypto_df = data.history(period="max")
+        
+        data = yf.Ticker(crypto)  # Fetch data for the cryptocurrency
+        crypto_df = data.history(period="max")  # Get historical market data
         if crypto_df.empty:
             raise ValueError(f"No data for {crypto}")
         crypto_df['Name'] = crypto
