@@ -79,6 +79,8 @@ def main():
     learning_rate = 0.001
     num_epochs = 100
     batch_size = 32
+    
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     # Get and preprocess data
     data = get_stock_data(ticker, start_date, end_date)
@@ -89,10 +91,10 @@ def main():
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, shuffle=False)
 
     # Convert to PyTorch tensors
-    X_train = torch.FloatTensor(X_train).transpose(0, 1)
-    y_train = torch.FloatTensor(y_train)
-    X_test = torch.FloatTensor(X_test).transpose(0, 1)
-    y_test = torch.FloatTensor(y_test)
+    X_train = torch.FloatTensor(X_train).transpose(0, 1).to(device)
+    y_train = torch.FloatTensor(y_train).to(device)
+    X_test = torch.FloatTensor(X_test).transpose(0, 1).to(device)
+    y_test = torch.FloatTensor(y_test).to(device)
 
     # print(f"Shape of X_train: {X_train.shape}")
     # print(f"Shape of y_train: {y_train.shape}")
@@ -100,7 +102,7 @@ def main():
     # print(f"Shape of y_test: {y_test.shape}")
 
     # Create model, loss function, and optimizer
-    model = StockTransformerEncoder(feature_size=1, d_model=d_model, nhead=nhead, num_layers=num_layers, dim_feedforward=dim_feedforward)
+    model = StockTransformerEncoder(feature_size=1, d_model=d_model, nhead=nhead, num_layers=num_layers, dim_feedforward=dim_feedforward).to(device)
     criterion = nn.MSELoss()
     optimizer = torch.optim.AdamW(model.parameters(), lr=learning_rate)
 
@@ -126,11 +128,11 @@ def main():
     # Make predictions
     model.eval()
     with torch.no_grad():
-        test_predictions = model(X_test)[-1, :, 0].numpy()
+        test_predictions = model(X_test)[-1, :, 0].cpu().numpy()
 
     # Inverse transform predictions
     test_predictions = scaler.inverse_transform(test_predictions.reshape(-1, 1))
-    y_test_actual = scaler.inverse_transform(y_test.numpy().reshape(-1, 1))
+    y_test_actual = scaler.inverse_transform(y_test.cpu().numpy().reshape(-1, 1))
 
     # Calculate RMSE
     rmse = np.sqrt(np.mean((test_predictions - y_test_actual)**2))
@@ -152,6 +154,7 @@ def main():
 
     future_predictions = scaler.inverse_transform(np.array(future_predictions).reshape(-1, 1))
     print("Future 30-day predictions:", future_predictions.flatten())
+
 
 if __name__ == "__main__":
     main()
